@@ -199,4 +199,91 @@ describe("Sweet Shop API", () => {
       expect(res.body.length).toBe(2);
     });
   });
+  describe("GET /api/sweets/search", () => {
+    beforeEach(async () => {
+      await Sweet.deleteMany({});
+    });
+
+    it("should search sweets by name (case-insensitive)", async () => {
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Milk Chocolate", category: "chocolate", price: 10, quantity: 50 });
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Dark Chocolate", category: "chocolate", price: 15, quantity: 30 });
+      const res = await request(app).get("/api/sweets/search?name=chocolate");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBe(2);
+      expect(res.body[0].name.toLowerCase()).toContain("chocolate");
+    });
+
+    it("should filter sweets by category", async () => {
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Barfi Special", category: "barfi", price: 12, quantity: 20 });
+      const res = await request(app).get("/api/sweets/search?category=barfi");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].category).toBe("barfi");
+    });
+
+    it("should filter sweets by price range", async () => {
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Milk Chocolate", category: "chocolate", price: 10, quantity: 50 });
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Barfi Special", category: "barfi", price: 12, quantity: 20 });
+      const res = await request(app).get("/api/sweets/search?minPrice=9&maxPrice=13");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBe(2);
+    });
+
+    it("should sort sweets by price ascending", async () => {
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Cheap Sweet", category: "candy", price: 5, quantity: 10 });
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Expensive Sweet", category: "candy", price: 20, quantity: 10 });
+      const res = await request(app).get("/api/sweets/search?sortBy=price&sortOrder=asc");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBeGreaterThan(1);
+      expect(res.body[0].price).toBeLessThanOrEqual(res.body[1].price);
+    });
+
+    it("should sort sweets by name descending", async () => {
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Alpha", category: "barfi", price: 5, quantity: 10 });
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ name: "Beta", category: "laddu", price: 7, quantity: 20 });
+      const res = await request(app).get("/api/sweets/search?sortBy=name&sortOrder=desc");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBeGreaterThan(1);
+      expect(res.body[0].name >= res.body[1].name).toBe(true);
+    });
+
+    it("should return empty array if no sweets match search", async () => {
+      const res = await request(app).get("/api/sweets/search?name=nonexistent");
+      expect(res.statusCode).toBe(200);
+      expect(res.body.length).toBe(0);
+    });
+
+    it("should handle invalid price range gracefully", async () => {
+      const res = await request(app).get("/api/sweets/search?minPrice=abc&maxPrice=xyz");
+      expect(res.statusCode).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+    });
+  });
 });
