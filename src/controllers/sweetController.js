@@ -11,3 +11,19 @@ exports.addSweet = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+exports.deleteSweet = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid sweet ID" });
+  }
+  try {
+    const sweet = await Sweet.findByIdAndDelete(id);
+    if (!sweet) {
+      return res.status(404).json({ error: "Sweet not found" });
+    }
+    res.status(200).json({ message: "Sweet deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
