@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const ownerRoutes = require("./routes/owner");
-const customerRoutes = require("./routes/customer");  
+const customerRoutes = require("./routes/customer"); 
+const sweetsRouter = require("./routes/sweets");
+
 const app = express();
 const cors = require("cors");
 app.use(cors());
@@ -16,6 +18,8 @@ mongoose.connect(
 app.use(express.json());
 app.use("/api/owner", ownerRouter);
 app.use("/api/customers", customerRouter);
+
+app.use("/api/sweets", sweetsRouter);
 
 module.exports = app;
 app.listen(3000, () => {
