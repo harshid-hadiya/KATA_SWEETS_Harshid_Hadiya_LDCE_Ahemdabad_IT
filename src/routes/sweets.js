@@ -9,4 +9,6 @@ router.delete("/:id", verifyOwnerJWT, sweetController.deleteSweet);
 
 router.get("/", sweetController.getAllSweets);
 
+router.get("/search", sweetController.searchAndSortSweets);
+
 module.exports = router;
