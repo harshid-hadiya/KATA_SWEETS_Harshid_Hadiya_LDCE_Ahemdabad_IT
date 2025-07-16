@@ -160,4 +160,43 @@ describe("Sweet Shop API", () => {
       expect(res.statusCode).toBe(404);
     });
   });
+  describe("GET /api/sweets", () => {
+    beforeEach(async () => {
+      await Sweet.deleteMany({});
+    });
+
+    it("should return an empty array if no sweets exist", async () => {
+      const res = await request(app).get("/api/sweets");
+      expect(res.statusCode).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(0);
+    });
+
+    it("should return all sweets", async () => {
+      const sweet1 = {
+        name: "Sweet1",
+        category: "barfi",
+        price: 5,
+        quantity: 10,
+      };
+      const sweet2 = {
+        name: "Sweet2",
+        category: "laddu",
+        price: 7,
+        quantity: 20,
+      };
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send(sweet1);
+      await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send(sweet2);
+      const res = await request(app).get("/api/sweets");
+      expect(res.statusCode).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(2);
+    });
+  });
 });
