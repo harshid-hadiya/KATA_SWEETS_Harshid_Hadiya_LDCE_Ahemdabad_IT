@@ -27,3 +27,12 @@ exports.deleteSweet = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getAllSweets = async (req, res) => {
+  try {
+    const sweets = await Sweet.find();
+    res.status(200).json(sweets);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
