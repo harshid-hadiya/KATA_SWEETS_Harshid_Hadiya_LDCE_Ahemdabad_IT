@@ -110,5 +110,54 @@ describe("Sweet Shop API", () => {
     expect(res.body.error).toMatch(/price|quantity/);
   });
 
-  
+  describe("DELETE /api/sweets/:id", () => {
+    let sweetId;
+    beforeEach(async () => {
+      await Sweet.deleteMany({});
+      const uniqueName = "Test Sweet " + Date.now();
+      const sweet = {
+        name: uniqueName,
+        category: "barfi",
+        price: 10,
+        quantity: 5,
+      };
+      const res = await request(app)
+        .post("/api/sweets")
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send(sweet);
+      sweetId = res.body._id;
+    });
+
+    it("should delete a sweet by id", async () => {
+      const res = await request(app)
+        .delete(`/api/sweets/${sweetId}`)
+        .set("Authorization", `Bearer ${ownerToken}`);
+      expect(res.statusCode).toBe(200);
+      expect(res.body.message).toMatch(/deleted/i);
+    });
+
+    it("should return 404 if sweet does not exist", async () => {
+      const fakeId = "507f1f77bcf86cd799439011";
+      const res = await request(app)
+        .delete(`/api/sweets/${fakeId}`)
+        .set("Authorization", `Bearer ${ownerToken}`);
+      expect(res.statusCode).toBe(404);
+      expect(res.body.error).toMatch(/not found/i);
+    });
+
+    it("should return 400 for invalid sweet id format", async () => {
+      const res = await request(app)
+        .delete(`/api/sweets/invalid-id`)
+        .set("Authorization", `Bearer ${ownerToken}`);
+      expect(res.statusCode).toBe(400);
+      expect(res.body.error).toMatch(/invalid/i);
+    });
+
+    it("should return 404 if id is missing", async () => {
+      const res = await request(app)
+        .delete(`/api/sweets/`)
+        .set("Authorization", `Bearer ${ownerToken}`);
+      expect(res.statusCode).toBe(404);
+    });
+  });
 });
