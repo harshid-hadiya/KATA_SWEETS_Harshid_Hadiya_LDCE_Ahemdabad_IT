@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const sweetController = require("../controllers/sweetController");
-const verifyOwnerJWT = require("../middleware/auth");
+const verifyOwnerJWT = require("../middlewares/auth");
 
 router.post("/", verifyOwnerJWT, sweetController.addSweet);
 

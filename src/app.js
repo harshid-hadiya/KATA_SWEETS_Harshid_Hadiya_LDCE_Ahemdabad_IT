@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const ownerRoutes = require("./routes/owner");
-const customerRoutes = require("./routes/customer"); 
+const ownerRouter = require("./routes/owner");
+const customerRouter = require("./routes/customer"); 
 const sweetsRouter = require("./routes/sweets");
 const purchaseRouter = require("./routes/purchase");
 
