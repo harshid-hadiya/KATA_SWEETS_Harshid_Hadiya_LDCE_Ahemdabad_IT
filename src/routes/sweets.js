@@ -11,4 +11,6 @@ router.get("/", sweetController.getAllSweets);
 
 router.get("/search", sweetController.searchAndSortSweets);
 
+router.patch("/:id/restock", verifyOwnerJWT, sweetController.restockSweet);
+
 module.exports = router;

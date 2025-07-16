@@ -67,3 +67,23 @@ exports.searchAndSortSweets = async (req, res) => {
   }
 };
 
+exports.restockSweet = async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+  if (!quantity || quantity <= 0) {
+    return res
+      .status(400)
+      .json({ error: "Quantity must be a positive number" });
+  }
+  try {
+    const sweet = await Sweet.findById(id);
+    if (!sweet) {
+      return res.status(404).json({ error: "Sweet not found" });
+    }
+    sweet.quantity += quantity;
+    await sweet.save();
+    res.status(200).json({ message: "Sweet restocked", sweet });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
