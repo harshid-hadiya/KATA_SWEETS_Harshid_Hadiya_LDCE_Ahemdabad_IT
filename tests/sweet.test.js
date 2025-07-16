@@ -286,4 +286,47 @@ describe("Sweet Shop API", () => {
       expect(Array.isArray(res.body)).toBe(true);
     });
   });
+  describe("PATCH /api/sweets/:id/restock", () => {
+    let sweetId;
+    beforeEach(async () => {
+      await Sweet.deleteMany({});
+      const sweet = await Sweet.create({
+        name: "Restock Sweet",
+        category: "barfi",
+        price: 10,
+        quantity: 5,
+      });
+      sweetId = sweet._id;
+    });
+    it("should restock sweet successfully", async () => {
+      const res = await request(app)
+        .patch(`/api/sweets/${sweetId}/restock`)
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ quantity: 10 });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.sweet.quantity).toBe(15);
+    });
+    it("should return 404 if sweet not found", async () => {
+      const res = await request(app)
+        .patch(`/api/sweets/507f1f77bcf86cd799439011/restock`)
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ quantity: 10 });
+      expect(res.statusCode).toBe(404);
+      expect(res.body.error).toMatch(/not found/i);
+    });
+    it("should return 400 for invalid quantity", async () => {
+      const res = await request(app)
+        .patch(`/api/sweets/${sweetId}/restock`)
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({ quantity: -5 });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.error).toMatch(/positive number/);
+    });
+    it("should return 401 if not authorized", async () => {
+      const res = await request(app)
+        .patch(`/api/sweets/${sweetId}/restock`)
+        .send({ quantity: 5 });
+      expect(res.statusCode).toBe(401);
+    });
+  });
 });
