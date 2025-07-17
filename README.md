@@ -77,4 +77,4 @@ A simple backend API to manage sweets in a shop. Built with Node.js, Express, Mo
 **Note:** This project is backend-only. All requirements from the kata are fully implemented and tested.
 
 
-INTERVIEW The clarity of building reliable software from tests first fuels my passion for purposeful development.
+The clarity of building reliable software from tests first fuels my passion for purposeful development.
