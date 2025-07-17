@@ -1,5 +1,21 @@
 ## There is video present of the working model kata_web.mp4
 
+# See Before Review
+
+All **backend files** have been moved into a dedicated `backend/` folder to improve the overall project structure and maintainability.
+
+> -> This is purely a structural change.  
+> -> All previous commit history remains **intact** and can still be viewed globally via the main commit log.  
+> -> No commit history is lost or isolated to the `backend/` folder.
+
+This restructuring ensures better separation of concerns, especially useful when scaling the project with a `frontend/` and `backend/` split.
+
+---
+
+📌 **Note for contributors and reviewers:**  
+The commit history still reflects all changes across the whole project — just navigate the commit log normally (not inside folders) to see every change in one place.
+
+
 # Sweet Shop Management System
 
 A simple backend API to manage sweets in a shop. Built with Node.js, Express, Mongoose, and tested using Jest.
