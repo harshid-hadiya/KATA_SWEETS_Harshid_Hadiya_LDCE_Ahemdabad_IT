@@ -1,3 +1,5 @@
+## There is video present of the working model kata_web.mp4
+
 # Sweet Shop Management System
 
 A simple backend API to manage sweets in a shop. Built with Node.js, Express, Mongoose, and tested using Jest.
@@ -73,3 +75,6 @@ A simple backend API to manage sweets in a shop. Built with Node.js, Express, Mo
 ---
 
 **Note:** This project is backend-only. All requirements from the kata are fully implemented and tested.
+
+
+INTERVIEW The clarity of building reliable software from tests first fuels my passion for purposeful development.
